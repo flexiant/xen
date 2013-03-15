@@ -19,11 +19,22 @@ else
   arch=amd64
 fi
 
+xenrevision=`git rev-parse HEAD`
+qemurevision=`cd ./tools/qemu-xen-dir-remote ; git rev-parse HEAD`
+builddate=`date +'%Y%m%d%H%M%S'`
+
 # Prepare the directory to package
 cd dist
 rm -rf deb
 cp -a install deb
 cp -a ../minideb/debian deb/
+
+# fix version etc. up
+perl -p -i -e 's/\@VERSION\@/'${version}'/g;' deb/debian/control deb/debian/changelog
+perl -p -i -e 's/\@BUILDDATE\@/'${builddate}'/g;' deb/debian/control deb/debian/changelog
+perl -p -i -e 's/\@XENREVISION\@/'${xenrevision}'/g;' deb/debian/control deb/debian/changelog
+perl -p -i -e 's/\@QEMUREVISION\@/'${qemurevision}'/g;' deb/debian/control deb/debian/changelog
+cat COPYING >> deb/debian/copyright
 
 # Debian doesn't use /usr/lib64 for 64-bit libraries
 if test -d deb/usr/lib64 ; then 
