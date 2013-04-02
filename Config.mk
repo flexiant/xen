@@ -206,7 +206,7 @@ SEABIOS_UPSTREAM_URL ?= git://xenbits.xen.org/seabios.git
 endif
 OVMF_UPSTREAM_REVISION ?= b0855f925c6e2e0b21fbb03fab4b5fb5b6876871
 #QEMU_UPSTREAM_REVISION ?= 351f94ff4bf3a7795ca5b282305aa610e598eec0
-QEMU_UPSTREAM_REVISION ?= xen-4.2-track-github-abligh
+QEMU_UPSTREAM_REVISION ?= xen-4.2-track-github-abligh-fixodirect
 SEABIOS_UPSTREAM_TAG ?= rel-1.6.3.2
 # Sun Mar 11 09:27:07 2012 -0400
 # Update version to 1.6.3.2
