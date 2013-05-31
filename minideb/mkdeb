@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# mkdeb: package the dist/install output of a Xen build in a .deb 
+#
+# Takes 2 arguments, the path to the dist directory and the version
+
+set -e
+
+if test -z "$1" -o -z "$2" ; then 
+  echo "usage: $0 path-to-XEN_ROOT xen-version"
+  exit 1
+fi 
+
+cd $1
+version=$2
+if test "$XEN_TARGET_ARCH" = "x86_32"; then
+  arch=i386
+else
+  arch=amd64
+fi
+
+xenrevision=`git rev-parse HEAD`
+qemurevision=`cd ./tools/qemu-xen-dir-remote ; git rev-parse HEAD`
+builddate=`date +'%Y%m%d%H%M%S'`
+
+# Prepare the directory to package
+cd dist
+rm -rf deb
+cp -a install deb
+cp -a ../minideb/debian deb/
+
+# fix version etc. up
+perl -p -i -e 's/\@VERSION\@/'${version}'/g;' deb/debian/control deb/debian/changelog
+perl -p -i -e 's/\@BUILDDATE\@/'${builddate}'/g;' deb/debian/control deb/debian/changelog
+perl -p -i -e 's/\@XENREVISION\@/'${xenrevision}'/g;' deb/debian/control deb/debian/changelog
+perl -p -i -e 's/\@QEMUREVISION\@/'${qemurevision}'/g;' deb/debian/control deb/debian/changelog
+cat COPYING >> deb/debian/copyright
+
+# Debian doesn't use /usr/lib64 for 64-bit libraries
+if test -d deb/usr/lib64 ; then 
+  cp -a deb/usr/lib64/* deb/usr/lib/
+  rm -rf deb/usr/lib64
+fi
+
+# init directories
+mv deb/etc/init.d/xencommons deb/debian/xen-4.2-mini.xencommons.init
+mv deb/etc/init.d/xen-watchdog deb/debian/xen-4.2-mini.xen-watchdog.init
+
+# Don't want the symlinks to libraries in the package
+# find deb/usr/lib -type l | xargs rm
+
+rm -rf deb/usr/share/doc deb/usr/include
+
+( cd deb ; debuild -us -uc -b)
+
+cp xen-4.2-mini_${version}-${builddate}_amd64.deb xen-4.2-mini_${version}-${builddate}_amd64__once.deb
+cp install/boot/xen-${version}.gz xen-4.2-mini_${version}-${builddate}.gz
+
+# Tidy up after ourselves
+#rm -rf deb

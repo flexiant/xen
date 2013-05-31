@@ -144,6 +144,11 @@ world:
 debball: dist
 	fakeroot sh ./tools/misc/mkdeb $(XEN_ROOT) $$($(MAKE) -C xen xenversion | grep -v :)
 
+# Package a build in a .deb file
+.PHONY: minideb
+minideb: dist
+	sh ./minideb/mkdeb $(XEN_ROOT) $$($(MAKE) -C xen xenversion | grep -v :)
+
 # clean doesn't do a kclean
 .PHONY: clean
 clean::
