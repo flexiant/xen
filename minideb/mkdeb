@@ -43,8 +43,8 @@ if test -d deb/usr/lib64 ; then
 fi
 
 # init directories
-mv deb/etc/init.d/xencommons deb/debian/xen-4.2-mini.xencommons.init
-mv deb/etc/init.d/xen-watchdog deb/debian/xen-4.2-mini.xen-watchdog.init
+mv deb/etc/init.d/xencommons deb/debian/xen-4.3-mini.xencommons.init
+mv deb/etc/init.d/xen-watchdog deb/debian/xen-4.3-mini.xen-watchdog.init
 
 # Don't want the symlinks to libraries in the package
 # find deb/usr/lib -type l | xargs rm
@@ -53,8 +53,8 @@ rm -rf deb/usr/share/doc deb/usr/include
 
 ( cd deb ; debuild -us -uc -b)
 
-cp xen-4.2-mini_${version}-${builddate}_amd64.deb xen-4.2-mini_${version}-${builddate}_amd64__once.deb
-cp install/boot/xen-${version}.gz xen-4.2-mini_${version}-${builddate}.gz
+cp xen-4.3-mini_${version}-${builddate}_amd64.deb xen-4.3-mini_${version}-${builddate}_amd64__once.deb
+cp install/boot/xen-${version}.gz xen-4.3-mini_${version}-${builddate}.gz
 
 # Tidy up after ourselves
 #rm -rf deb
